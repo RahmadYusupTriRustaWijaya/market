@@ -15,21 +15,23 @@ class OrderItemController extends Controller
     public function show($id)
     {
         $orderItem = OrderItem::findOrFail($id);
-        return respone()->json($orderItem);
+        return response()->json($orderItem);
     }
-public function store(Request $request)
+    public function store(Request $request)
     {
-        return OrderIitem::create($request->only([
-        'order_id',
-        'product_id',
-        'quantity',
-        'unit_amount',
-        'total_amount',
-            ]));
+    $data = $request->only([
+        'order_id', 
+        'product_id', 
+        'quantity', 
+        'unit_amount'
+    ]);
+    $data['total_amount'] = $data['quantity'] * $data['unit_amount'];
+
+    return OrderItem::create($data);
     }
 
     public function update(Request $request, OrderItem $orderItem)
-{
+    {
     $orderItem->update($request->only([
         'order_id',
         'product_id',
@@ -39,10 +41,11 @@ public function store(Request $request)
     ]));
 
     return $orderItem;
-}
+    }
     public function destroy(OrderItem $orderItem)
     {
         $orderItem->delete();
         return response()->json(['message' => 'Order item deleted']);
     }
 }
+
